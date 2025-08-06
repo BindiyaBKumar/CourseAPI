@@ -1,0 +1,14 @@
+﻿using CourseAppAPI.DTO;
+using CourseAppAPI.Models;
+
+namespace CourseAppAPI.Services
+{
+    public interface ICourseService
+    {
+        public Task<List<CourseDTO>> GetCourseList();
+        public Task<CourseDTO> GetCourse(int id);
+        public Task<CourseDTO> AddCourse(CourseDTO input);
+        public Task<CourseDTO> UpdateCourse(CourseDTO input);
+        public Task DeleteCourse(int id);
+    }
+}

@@ -1,0 +1,75 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\kumar\\source\\repos\\.NetRepo\\CourseAppAPISolution\\CourseAppAPI\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{7A3E39B9-E1C7-4F62-8483-339FD11450B4}|CourseAppAPI.csproj|c:\\users\\kumar\\source\\repos\\.netrepo\\courseappapisolution\\courseappapi\\controllers\\coursecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7A3E39B9-E1C7-4F62-8483-339FD11450B4}|CourseAppAPI.csproj|solutionrelative:controllers\\coursecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7A3E39B9-E1C7-4F62-8483-339FD11450B4}|CourseAppAPI.csproj|c:\\users\\kumar\\source\\repos\\.netrepo\\courseappapisolution\\courseappapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7A3E39B9-E1C7-4F62-8483-339FD11450B4}|CourseAppAPI.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7A3E39B9-E1C7-4F62-8483-339FD11450B4}|CourseAppAPI.csproj|c:\\users\\kumar\\source\\repos\\.netrepo\\courseappapisolution\\courseappapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{7A3E39B9-E1C7-4F62-8483-339FD11450B4}|CourseAppAPI.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 3,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\kumar\\source\\repos\\.NetRepo\\CourseAppAPISolution\\CourseAppAPI\\appsettings.json",
+              "RelativeDocumentMoniker": "appsettings.json",
+              "ToolTip": "C:\\Users\\kumar\\source\\repos\\.NetRepo\\CourseAppAPISolution\\CourseAppAPI\\appsettings.json",
+              "RelativeToolTip": "appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAABYAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-08-06T17:57:39.551Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\kumar\\source\\repos\\.NetRepo\\CourseAppAPISolution\\CourseAppAPI\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "C:\\Users\\kumar\\source\\repos\\.NetRepo\\CourseAppAPISolution\\CourseAppAPI\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAAACgAAAAXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-06T17:53:49.316Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "CourseController.cs",
+              "DocumentMoniker": "C:\\Users\\kumar\\source\\repos\\.NetRepo\\CourseAppAPISolution\\CourseAppAPI\\Controllers\\CourseController.cs",
+              "RelativeDocumentMoniker": "Controllers\\CourseController.cs",
+              "ToolTip": "C:\\Users\\kumar\\source\\repos\\.NetRepo\\CourseAppAPISolution\\CourseAppAPI\\Controllers\\CourseController.cs",
+              "RelativeToolTip": "Controllers\\CourseController.cs",
+              "ViewState": "AgIAAAoAAAAAAAAAAAAuwBoAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-02T14:09:25.208Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
