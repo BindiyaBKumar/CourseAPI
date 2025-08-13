@@ -1,4 +1,5 @@
 using CourseAppAPI.DAL;
+using CourseAppAPI.Models;
 using CourseAppAPI.Repository;
 using CourseAppAPI.Services;
 using Microsoft.EntityFrameworkCore;
@@ -15,11 +16,38 @@ builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddMetrics();
-builder.Services.AddDbContext<CourseDetailDBContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("CourseDetailDB")));
+if (builder.Configuration.GetValue<bool>("UseUnMemoryDb"))
+{
+    builder.Services.AddDbContext<CourseDetailDBContext>(options => options.UseInMemoryDatabase("CourseDetailDB"));}
+else
+{
+    builder.Services.AddDbContext<CourseDetailDBContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("CourseDetailDB")));
+}
 builder.Services.AddScoped<ICourseRepository, CourseRepository>();
 builder.Services.AddScoped<ICourseService, CourseService>();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<CourseDetailDBContext>();
+
+    if (dbContext.Database.IsInMemory() && app.Environment.IsDevelopment())
+    {
+        // Seed the in-memory database with initial data if needed
+        if (dbContext.Database.EnsureCreated())
+        {
+            dbContext.AddRange(
+                new CourseDetail { CourseId = 1, CourseNumber = "X01", CourseName = ".Net Development", CourseDescription = "Detailed tuitorial on .Net Development", CourseCost = 99.99, CourseDuration = 8, CourseTutor = "Mr. X" },
+                new CourseDetail { CourseId = 2, CourseNumber = "X02", CourseName = "C# Programming", CourseDescription = "C# Programming for beginners", CourseCost = 89.99, CourseDuration = 10, CourseTutor = "Mr. Y" },
+                new CourseDetail { CourseId = 3, CourseNumber = "X03", CourseName = "Entity Framework", CourseDescription = "Hands-on project using entity framework", CourseCost = 99.99, CourseDuration = 8, CourseTutor = "Mr. X" }
+            );
+            dbContext.SaveChanges();
+        }
+
+    }
+}
+    
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -27,6 +55,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.Map("/",() => Results.Redirect("/swagger/"));
 }
 
 app.UseCors(options =>
