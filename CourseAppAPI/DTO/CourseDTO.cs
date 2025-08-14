@@ -20,5 +20,10 @@ namespace CourseAppAPI.DTO
         public double CourseCost { get; set; }
 
         public string CourseDescription { get; set; }
+
+        public string CourseStatus { get; set; }
+
+        public DateTime? CreatedAt { get; set; } = DateTime.UtcNow;
+
     }
 }

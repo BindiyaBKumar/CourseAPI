@@ -13,13 +13,46 @@ namespace CourseAppAPI.Repository
             _dbcontext = dbcontext;
         }
 
-        public async Task<List<CourseDetail>> GetCourseList()
+        public async Task<(List<CourseDetail>,int)> GetCourseList(FilterDTO filters)
         {
-            var courselist = await _dbcontext.CourseDetails.ToListAsync();
+            IQueryable<CourseDetail> query = _dbcontext.CourseDetails;
+
+            //Apply Filters
+            if(!string.IsNullOrWhiteSpace(filters.status))
+            {
+                query = query.Where(c => c.CourseStatus.Equals(filters.status, StringComparison.OrdinalIgnoreCase));
+            }
+            if(!string.IsNullOrWhiteSpace(filters.tutor))
+            {
+                query = query.Where(c => c.CourseTutor.Equals(filters.tutor, StringComparison.OrdinalIgnoreCase));
+            }
+            if(!string.IsNullOrWhiteSpace(filters.queryString))
+            {
+                query = query.Where(c => c.CourseName.Contains(filters.queryString, StringComparison.OrdinalIgnoreCase) ||
+                                         c.CourseDescription.Contains(filters.queryString, StringComparison.OrdinalIgnoreCase));
+            }
+
+            //Apply Sorting
+            query = filters.sort switch
+            {
+                "createdAt" => query.OrderBy(c => c.CreatedAt),
+                "-createdAt" => query = query.OrderByDescending(c => c.CreatedAt),
+                "name" => query.OrderBy(c => c.CourseName),
+                "-name" => query.OrderByDescending(c => c.CourseName),
+                "id" => query.OrderBy(c => c.CourseId),
+                "-id" => query.OrderByDescending(c => c.CourseId),
+                _ => query.OrderBy(c => c.CourseId)
+            };
+
+            //Apply Pagination and hit query in DB using ToListAsync()            
+            var total = await query.CountAsync();
+            var courselist = await query.Skip((filters.pageNumber-1) * filters.pageSize)
+                                        .Take(filters.pageSize)
+                                        .ToListAsync();
 
             if (courselist == null)
-                return null;
-            return courselist;
+                return (null,0);
+            return (courselist,total);
         }
 
         public async Task<CourseDetail> GetCourse(int id)

@@ -38,9 +38,9 @@ using (var scope = app.Services.CreateScope())
         if (dbContext.Database.EnsureCreated())
         {
             dbContext.AddRange(
-                new CourseDetail { CourseId = 1, CourseNumber = "X01", CourseName = ".Net Development", CourseDescription = "Detailed tuitorial on .Net Development", CourseCost = 99.99, CourseDuration = 8, CourseTutor = "Mr. X" },
-                new CourseDetail { CourseId = 2, CourseNumber = "X02", CourseName = "C# Programming", CourseDescription = "C# Programming for beginners", CourseCost = 89.99, CourseDuration = 10, CourseTutor = "Mr. Y" },
-                new CourseDetail { CourseId = 3, CourseNumber = "X03", CourseName = "Entity Framework", CourseDescription = "Hands-on project using entity framework", CourseCost = 99.99, CourseDuration = 8, CourseTutor = "Mr. X" }
+                new CourseDetail { CourseId = 1, CourseNumber = "X01", CourseName = ".Net Development", CourseDescription = "Detailed tuitorial on .Net Development", CourseCost = 99.99, CourseDuration = 8, CourseTutor = "Mr. X",CourseStatus="Active",CreatedAt= DateTime.Parse("2025-08-14") },
+                new CourseDetail { CourseId = 2, CourseNumber = "X02", CourseName = "C# Programming", CourseDescription = "C# Programming tuitorial for beginners", CourseCost = 89.99, CourseDuration = 10, CourseTutor = "Mr. Y", CourseStatus = "Inactive" },
+                new CourseDetail { CourseId = 3, CourseNumber = "X03", CourseName = "Entity Framework", CourseDescription = "Hands-on project using entity framework", CourseCost = 99.99, CourseDuration = 8, CourseTutor = "Mr. X", CourseStatus = "Active" }
             );
             dbContext.SaveChanges();
         }

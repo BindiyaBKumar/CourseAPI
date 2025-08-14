@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Runtime.InteropServices;
 
 namespace CourseAppAPI.Models
 {
@@ -15,11 +16,18 @@ namespace CourseAppAPI.Models
 
         public double CourseDuration { get; set; }
 
-        public string CourseTutor { get; set; }
+        public string CourseTutor { get; set; } = "";
 
         public double CourseCost { get; set; }
 
-        public string CourseDescription { get; set; }
+        [Required]
+        [MaxLength(200)]
+        public string CourseDescription { get; set; } 
+
+        public string CourseStatus { get; set; } = "Active";
+        
+        public DateTime? CreatedAt { get; set; } = DateTime.UtcNow;
+
 
     }
 }

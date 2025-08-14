@@ -14,13 +14,15 @@ namespace CourseAppAPI.Services
            _courseRepository = courseRepository;
         }
 
-        public async Task<List<CourseDTO>> GetCourseList()
+        public async Task<PaginatedResponse<CourseDTO>> GetCourseList(FilterDTO filters)
         {
-            var courseList = await _courseRepository.GetCourseList();
+            var courseList = await _courseRepository.GetCourseList(filters);
 
-            if (courseList == null)
-                return null;
-            return courseList.Select(c => new CourseDTO
+            if (courseList.Item1 == null)
+                return null;            
+
+
+            var result = courseList.Item1.Select(c => new CourseDTO
             {
                 CourseId=c.CourseId,
                 CourseName=c.CourseName,
@@ -28,8 +30,20 @@ namespace CourseAppAPI.Services
                 CourseDuration=c.CourseDuration,
                 CourseTutor=c.CourseTutor,
                 CourseCost=c.CourseCost,
-                CourseDescription=c.CourseDescription
+                CourseDescription=c.CourseDescription,
+                CourseStatus = c.CourseStatus,
+                CreatedAt = c.CreatedAt
             }).ToList();
+
+            return new PaginatedResponse<CourseDTO>
+            {
+                Items = result,
+                PageNumber = filters.pageNumber,
+                PageSize = filters.pageSize,
+                TotalItems = courseList.Item2,
+                HasNextPage = courseList.Item2 > filters.pageNumber * filters.pageSize,
+                HasPreviousPage = filters.pageNumber > 1
+            };
         }
 
         public async Task<CourseDTO> GetCourse(int id)

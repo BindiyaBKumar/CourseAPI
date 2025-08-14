@@ -1,6 +1,7 @@
 ﻿using CourseAppAPI.DTO;
 using CourseAppAPI.Models;
 using CourseAppAPI.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +9,7 @@ using Prometheus;
 
 namespace CourseAppAPI.Controllers
 {
+    
     [Route("api/[controller]")]
     [ApiController]
     public class CourseController : ControllerBase
@@ -28,13 +30,36 @@ namespace CourseAppAPI.Controllers
 
 
         [HttpGet]
+        //[Authorize]
         [Route("GetCourseList")]
-        public async Task<ActionResult> GetCourseList()
+        public async Task<ActionResult> GetCourseList(
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 20,
+            [FromQuery] string? sort = "-createdAt",
+            [FromQuery] string? status = null,
+            [FromQuery] string? tutor = null,
+            [FromQuery] string? q = null)
         {
             counter.Inc();
             try
             {
-                var courseList = await _courseService.GetCourseList();
+                FilterDTO filters = new FilterDTO()
+                {
+                    pageNumber = page,
+                    pageSize = pageSize,
+                    sort = sort,
+                    status = status,
+                    tutor = tutor,
+                    queryString = q
+
+                };
+
+                const int maxSize = 100;
+
+                if (page<1 || pageSize<1 || pageSize>maxSize)
+                    return BadRequest($"Page number and page size should be greater than 0 and page size should not exceed {maxSize} !");
+
+                var courseList = await _courseService.GetCourseList(filters);
 
                 if (courseList == null)
                     return NotFound();
@@ -45,45 +70,7 @@ namespace CourseAppAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
-        [HttpGet]
-        [Route("GetCoursesPerPage/{pageNumber}/{pageSize}")]
-        public async Task<ActionResult<PaginatedResponse<CourseDTO>>> GetCoursesPerPage(
-        int pageNumber,
-        int pageSize)
-        {
-            try
-            {
-                var courseList = await _courseService.GetCourseList();
-
-                if (courseList != null)
-                {
-                    var totalItems = courseList.Count();
-
-                    var paginatedItems = courseList
-                        .Skip((pageNumber - 1) * pageSize)
-                        .Take(pageSize)
-                        .ToList();
-
-                    var response = new PaginatedResponse<CourseDTO>
-                    {
-                        PageNumber = pageNumber,
-                        PageSize = pageSize,
-                        TotalItems = totalItems,
-                        Items = paginatedItems
-                    };
-                    return Ok(response);
-                }
-                else
-                    return BadRequest("The page is empty !");
-                    
-                
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
+        
 
         [HttpGet]
         [Route("GetCourse/{id}")]

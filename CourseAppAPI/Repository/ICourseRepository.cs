@@ -6,7 +6,7 @@ namespace CourseAppAPI.Repository
 {
     public interface ICourseRepository
     {
-        public Task<List<CourseDetail>> GetCourseList();
+        public Task<(List<CourseDetail>,int total)> GetCourseList(FilterDTO filters);
         public Task<CourseDetail> GetCourse(int id);
         public Task<CourseDetail> AddCourse(CourseDTO courseDTO);
 
