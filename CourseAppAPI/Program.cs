@@ -1,12 +1,32 @@
 using CourseAppAPI.DAL;
+using CourseAppAPI.Helper;
 using CourseAppAPI.Models;
 using CourseAppAPI.Repository;
 using CourseAppAPI.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using Prometheus;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+//Configure authorization using JWT Token
+
+builder.Services.AddAuthentication("Bearer")
+        .AddJwtBearer("Bearer", options =>
+        {
+            options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = builder.Configuration.GetValue<string>("Jwt:Issuer"),
+                ValidAudience = builder.Configuration.GetValue<string>("Jwt:Audience"),
+                IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(builder.Configuration.GetValue<string>("Jwt:Key")))
+            };
+        });
+builder.Services.AddSingleton<JWTTokenService>();
 
 // Add services to the container.
 
@@ -14,7 +34,33 @@ builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "CourseAppAPI", Version = "v1" });
+
+    var bearerscheme = new OpenApiSecurityScheme
+    {
+        Description = "Please enter token",
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "bearer",
+        In = ParameterLocation.Header,
+        Reference = new OpenApiReference
+        {
+            Type = ReferenceType.SecurityScheme,
+            Id = "Bearer"
+        }
+    };
+    c.AddSecurityDefinition("Bearer", bearerscheme);
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            bearerscheme, Array.Empty<string>()
+        }
+    });
+});
 builder.Services.AddMetrics();
 if (builder.Configuration.GetValue<bool>("UseUnMemoryDb"))
 {
@@ -67,6 +113,7 @@ app.UseHttpsRedirection();
 
 app.UseHttpMetrics();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapMetrics(); // Add this line to expose the metrics endpoint

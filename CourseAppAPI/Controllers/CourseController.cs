@@ -28,9 +28,8 @@ namespace CourseAppAPI.Controllers
             return "Hello from CourseController!";
         }
 
-
-        [HttpGet]
-        //[Authorize]
+        [Authorize]
+        [HttpGet]        
         [Route("GetCourseList")]
         public async Task<ActionResult> GetCourseList(
             [FromQuery] int page = 1,
@@ -70,8 +69,8 @@ namespace CourseAppAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        
 
+        [Authorize]
         [HttpGet]
         [Route("GetCourse/{id}")]
         public async Task<IActionResult> GetCourse(int id)
@@ -92,6 +91,7 @@ namespace CourseAppAPI.Controllers
             }
         }
 
+        [Authorize]
         [HttpPost]
         [Route("AddCourse")]
         public async Task<IActionResult> CreateCourse([FromBody] CourseDTO input)
@@ -113,6 +113,7 @@ namespace CourseAppAPI.Controllers
             }
         }
 
+        [Authorize]
         [HttpPost]
         [Route("UpdateCourse")]
         public async Task<IActionResult> UpdateCourse([FromBody] CourseDTO input)
@@ -135,6 +136,7 @@ namespace CourseAppAPI.Controllers
             }
         }
 
+        [Authorize]
         [HttpDelete]
         public async Task<IActionResult> DeleteCourse(int id)
         {
