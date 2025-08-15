@@ -71,7 +71,10 @@ Once running, navigate to :
 
     Note : The port can be set in CourseAppAPI.http file 
 
-Example endpoints:
+
+# Sample endpoints:
+
+POST /api/Auth/Login → Get Bearer token to authorize other endpoints
 
 GET /api/GetCourseList → Get all courses
 
@@ -84,6 +87,7 @@ POST /api/AddCourse → Add a new course
 POST /api/UpdateCourse/{id} → Update a course
 
 DELETE /api/Course/{id} → Delete a course
+
 
 # Query Parameters
 
@@ -101,7 +105,7 @@ tutor : Accepts tutor name to filter data based on it. (Eg : Mr. X)
 q : Accepts a string and returns data where COurse name or Course description contains this string
 
 
-# Example Request
+# Sample Request
 
 POST /api/AddCourse
 
@@ -114,6 +118,32 @@ POST /api/AddCourse
   "courseStatus": "Active",
   "createdAt" : null
 
+}
+
+# Authentication
+
+The endpoints in this Web API uses JWT (JSON Web Token) Bearer Authentication to secure endpoints.
+
+When using the CRUD endpoints,
+
+1. Send valid credentials to the /api/auth/login endpoint to receive a JWT token.
+2. Pass the token in the Authorization header when calling protected endpoints: (Header -> Authorization: Bearer <your_token_here>)
+
+In case of Swagger UI, 
+1. Send valid credentials to the /api/auth/login endpoint to receive a JWT token.
+2. Click on 'Authorize' button and provide <your_token_here>
+3. Provide <your_token_here> and click on 'Authorize' to authorize all endpoints. Then click on close.
+4. Try any other CRUD endpoint. It should get automatically authorized.
+
+Note : Token expiration is configured in appsettings.json under the Jwt section.
+
+# Sample Login Request:
+POST /api/auth/login
+Content-Type: application/json
+
+{
+  "username": "user",
+  "password": "password"
 }
 
 # Future improvements
