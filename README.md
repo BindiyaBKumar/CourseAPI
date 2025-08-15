@@ -148,7 +148,7 @@ Content-Type: application/json
 
 # Future improvements
 
-1. Add Authorization logic using JWT token
+1. Manage application secrets
 2. Add XUnit test cases
 
 
