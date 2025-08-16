@@ -16,6 +16,7 @@ namespace CourseAppAPI.Models
 
         public double CourseDuration { get; set; }
 
+        [MaxLength(50)]
         public string CourseTutor { get; set; } = "";
 
         public double CourseCost { get; set; }
