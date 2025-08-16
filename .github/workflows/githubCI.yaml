@@ -1,5 +1,4 @@
 name: CI for CourseAppAPI
-name: CI - .NET Build & Test
 
 on:
   push:
