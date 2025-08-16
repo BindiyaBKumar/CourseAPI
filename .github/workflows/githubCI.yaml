@@ -30,10 +30,10 @@ jobs:
           restore-keys: nuget-${{ runner.os }}-
 
       - name: Restore
-        run: dotnet restore
+        run: dotnet restore CourseAppAPI/CourseAppAPI.sln
 
       - name: Build
-        run: dotnet build --no-restore --configuration Release
+        run: dotnet build CourseAppAPI/CourseAppAPI.sln --no-restore --configuration Release
 
       - name: Test
         run: dotnet test --no-build --configuration Release --verbosity normal
