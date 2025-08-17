@@ -60,7 +60,7 @@ namespace CourseAppAPI.Controllers
 
                 var courseList = await _courseService.GetCourseList(filters);
 
-                if (courseList == null)
+                if (courseList == null || courseList.Items == null)
                     return NotFound();
                 return Ok(courseList);
             }
@@ -81,7 +81,7 @@ namespace CourseAppAPI.Controllers
                     return BadRequest("Id should be greater than 0 !");
 
                 var course = await _courseService.GetCourse(id);
-                if (course == null)
+                if (course.CourseId==0 || course==null)
                     return NotFound();
                 return Ok(course);
             }
@@ -103,7 +103,7 @@ namespace CourseAppAPI.Controllers
                 
 
                 var newcourse = await _courseService.AddCourse(input);
-                if (newcourse == null)
+                if (newcourse==null || newcourse.CourseId==0)
                     return NotFound("Unable to add course. Please try again or contact admin.");
                 return Ok(newcourse);
             }

@@ -22,23 +22,32 @@ namespace CourseAppAPI.Helper
             };
 
             //Encode and secure the key
-            var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_configuration.GetValue<string>("Jwt:Key")));
+            string? configkey = _configuration.GetValue<string>("Jwt:Key");
+            if (!string.IsNullOrEmpty(configkey))
+            {
+                var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(configkey));
 
-            //Create signing credentials
-            var creds = new SigningCredentials(key,SecurityAlgorithms.HmacSha256);
 
-            //Generate the token using metadata, claim and signature
-            var token = new JwtSecurityToken(
-                issuer: _configuration.GetValue<string>("Jwt:Issuer"),
-                audience: _configuration.GetValue<string>("Jwt:Audience"),
-                claims: claims,
-                expires: DateTime.Now.AddMinutes(Convert.ToDouble(_configuration.GetValue<string>("Jwt:ExpirationMininutes"))),
-                signingCredentials: creds
-                );
+                //Create signing credentials
+                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            //Serialize and return token
-            return new JwtSecurityTokenHandler().WriteToken(token);
+                //Generate the token using metadata, claim and signature
+                var token = new JwtSecurityToken(
+                    issuer: _configuration.GetValue<string>("Jwt:Issuer"),
+                    audience: _configuration.GetValue<string>("Jwt:Audience"),
+                    claims: claims,
+                    expires: DateTime.Now.AddMinutes(Convert.ToDouble(_configuration.GetValue<string>("Jwt:ExpirationMininutes"))),
+                    signingCredentials: creds
+                    );
 
+                //Serialize and return token
+                return new JwtSecurityTokenHandler().WriteToken(token);
+            }
+            else
+            {
+                return "JWT Key is not configured properly in appsettings.json";
+
+            }
         }
     }
 }

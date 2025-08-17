@@ -9,21 +9,21 @@ namespace CourseAppAPI.Models
         public int CourseId { get; set; }
 
         [Required]
-        public string CourseNumber { get; set; }
+        public string? CourseNumber { get; set; }
 
         [Required]
-        public string CourseName { get; set; }
+        public string? CourseName { get; set; }
 
         public double CourseDuration { get; set; }
 
         [MaxLength(50)]
-        public string CourseTutor { get; set; } = "";
+        public string? CourseTutor { get; set; } = "";
 
         public double CourseCost { get; set; }
 
         [Required]
         [MaxLength(200)]
-        public string CourseDescription { get; set; } 
+        public string? CourseDescription { get; set; } 
 
         public string CourseStatus { get; set; } = "Active";
         

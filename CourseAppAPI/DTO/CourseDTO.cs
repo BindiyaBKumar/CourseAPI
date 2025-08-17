@@ -8,20 +8,20 @@ namespace CourseAppAPI.DTO
         public int CourseId { get; set; }
 
         [Required]
-        public string CourseNumber { get; set; }
+        public string? CourseNumber { get; set; } = "";
 
         [Required]
-        public string CourseName { get; set; }
+        public string? CourseName { get; set; } = "";
 
         public double CourseDuration { get; set; }
 
-        public string CourseTutor { get; set; }
+        public string? CourseTutor { get; set; }
 
         public double CourseCost { get; set; }
 
-        public string CourseDescription { get; set; }
+        public string? CourseDescription { get; set; }
 
-        public string CourseStatus { get; set; }
+        public string? CourseStatus { get; set; }
 
         public DateTime? CreatedAt { get; set; } = DateTime.UtcNow;
 

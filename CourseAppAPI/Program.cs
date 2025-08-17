@@ -11,7 +11,11 @@ using Prometheus;
 var builder = WebApplication.CreateBuilder(args);
 
 //Configure authorization using JWT Token
-
+var configkey = builder.Configuration.GetValue<string>("Jwt:Key");
+if(string.IsNullOrEmpty(configkey))
+{
+    throw new ArgumentException("JWT Key is not configured properly in appsettings.json");
+}
 builder.Services.AddAuthentication("Bearer")
         .AddJwtBearer("Bearer", options =>
         {
@@ -23,7 +27,7 @@ builder.Services.AddAuthentication("Bearer")
                 ValidateIssuerSigningKey = true,
                 ValidIssuer = builder.Configuration.GetValue<string>("Jwt:Issuer"),
                 ValidAudience = builder.Configuration.GetValue<string>("Jwt:Audience"),
-                IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(builder.Configuration.GetValue<string>("Jwt:Key")))
+                IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(configkey))
             };
         });
 builder.Services.AddSingleton<JWTTokenService>();

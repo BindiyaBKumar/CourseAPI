@@ -18,8 +18,8 @@ namespace CourseAppAPI.Services
         {
             var courseList = await _courseRepository.GetCourseList(filters);
 
-            if (courseList.Item1 == null)
-                return null;            
+            if (courseList.Item1.Count==0 || courseList.Item1==null)
+                return new PaginatedResponse<CourseDTO> { Items = null };            
 
 
             var result = courseList.Item1.Select(c => new CourseDTO
@@ -50,8 +50,8 @@ namespace CourseAppAPI.Services
         {
             var course = await _courseRepository.GetCourse(id);
 
-            if (course == null)
-                return null;
+            if (course ==null)
+                return new CourseDTO { CourseId=0};
             return new CourseDTO
             {
                 CourseId = course.CourseId,
@@ -69,7 +69,7 @@ namespace CourseAppAPI.Services
            var newcourse = await _courseRepository.AddCourse(input);
 
             if (newcourse == null)
-                return null;
+                return new CourseDTO { CourseId=0 };
 
             CourseDTO output = new CourseDTO
             {
@@ -91,7 +91,7 @@ namespace CourseAppAPI.Services
             var updatedcourse = await _courseRepository.UpdateCourse(input);
 
             if (updatedcourse == null)
-                return null;
+                return new CourseDTO { CourseId=0};
             CourseDTO output = new CourseDTO
             {
                 CourseId = updatedcourse.CourseId,

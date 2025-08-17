@@ -24,12 +24,12 @@ namespace CourseAppAPI.Repository
             }
             if(!string.IsNullOrWhiteSpace(filters.tutor))
             {
-                query = query.Where(c => c.CourseTutor.Equals(filters.tutor, StringComparison.OrdinalIgnoreCase));
+                query = query.Where(c => c.CourseTutor!=null && c.CourseTutor.Equals(filters.tutor, StringComparison.OrdinalIgnoreCase));
             }
             if(!string.IsNullOrWhiteSpace(filters.queryString))
             {
-                query = query.Where(c => c.CourseName.Contains(filters.queryString, StringComparison.OrdinalIgnoreCase) ||
-                                         c.CourseDescription.Contains(filters.queryString, StringComparison.OrdinalIgnoreCase));
+                query = query.Where(c => (c.CourseName!=null && c.CourseName.Contains(filters.queryString, StringComparison.OrdinalIgnoreCase)) ||
+                                         (c.CourseDescription!=null && c.CourseDescription.Contains(filters.queryString, StringComparison.OrdinalIgnoreCase)));
             }
 
             //Apply Sorting
@@ -51,7 +51,7 @@ namespace CourseAppAPI.Repository
                                         .ToListAsync();
 
             if (courselist == null)
-                return (null,0);
+                return (new List<CourseDetail> { },0);
             return (courselist,total);
         }
 
@@ -60,7 +60,7 @@ namespace CourseAppAPI.Repository
             var course = await _dbcontext.CourseDetails.Where(x=>x.CourseId==id).FirstOrDefaultAsync();
 
             if (course == null)
-                return null;
+                return new CourseDetail { CourseId=0};
             return course;
         }
 
@@ -83,8 +83,9 @@ namespace CourseAppAPI.Repository
                 return courseDetail;
             }
             catch (Exception ex) {
-                throw ex;
-            }
+                Console.WriteLine(ex.Message);
+                return new CourseDetail { CourseId = 0 };
+                }
         }
 
         public async Task<CourseDetail> UpdateCourse(CourseDTO course)
@@ -92,7 +93,8 @@ namespace CourseAppAPI.Repository
             var currentcourse = await _dbcontext.CourseDetails.FindAsync(course.CourseId);
 
             if (currentcourse == null)
-                return null;
+                return new CourseDetail{CourseId=0 }
+            ;
             
 
             currentcourse.CourseNumber=course.CourseNumber;
