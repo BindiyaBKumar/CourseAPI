@@ -61,7 +61,7 @@ namespace CourseAppAPI.Controllers
                 var courseList = await _courseService.GetCourseList(filters);
 
                 if (courseList == null || courseList.Items == null)
-                    return NotFound();
+                    return Ok(new PaginatedResponse<CourseDTO> { Items = null });
                 return Ok(courseList);
             }
             catch (Exception ex)

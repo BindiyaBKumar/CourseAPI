@@ -5,6 +5,8 @@ VisualStudioVersion = 17.13.35931.197
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CourseAppAPI", "CourseAppAPI.csproj", "{7A3E39B9-E1C7-4F62-8483-339FD11450B4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CourseAppAPI.Tests", "..\CourseAppAPI.Tests\CourseAppAPI.Tests.csproj", "{AD10DD29-E469-404D-9BA5-540E3A5A053E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{7A3E39B9-E1C7-4F62-8483-339FD11450B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A3E39B9-E1C7-4F62-8483-339FD11450B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7A3E39B9-E1C7-4F62-8483-339FD11450B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD10DD29-E469-404D-9BA5-540E3A5A053E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD10DD29-E469-404D-9BA5-540E3A5A053E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD10DD29-E469-404D-9BA5-540E3A5A053E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD10DD29-E469-404D-9BA5-540E3A5A053E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
