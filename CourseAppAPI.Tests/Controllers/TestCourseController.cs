@@ -75,5 +75,91 @@ namespace CourseAppAPI.Tests.Controllers
             Assert.Equal(StatusCodes.Status400BadRequest, badRequest.StatusCode);
             Assert.Equal("Page number and page size should be greater than 0 and page size should not exceed 100 !", badRequest.Value);
         }
+
+        [Fact]
+        public async Task GetCourseList_Returns400_on_Exception()
+        {
+            //Arrange
+            var courseServiceMock = new Mock<ICourseService>();
+            courseServiceMock.Setup(courseServiceMock => courseServiceMock.GetCourseList(It.IsAny<FilterDTO>())).Throws<Exception>();
+            var sut = new CourseController(courseServiceMock.Object);
+
+            //Act
+            var exception = await sut.GetCourseList(
+                page: 1,
+                pageSize: 10,
+                sort: "-createdAt",
+                status: null,
+                tutor: null,
+                q: null
+                );
+
+            //Assert
+            var badRequest = Assert.IsType<BadRequestObjectResult>(exception);
+        }
+
+        [Fact]
+        public async Task GetCourse_Returns200_WithPayLoad()
+        {
+            // Arrange
+            var expected = new CourseDTO
+            {
+                CourseId = 1,
+                CourseName = "Test Course",
+                CourseNumber = "TC101",
+                CourseDuration = 30,
+                CourseTutor = "John Doe",
+                CourseCost = 100,
+                CourseDescription = "This is a test course.",
+                CourseStatus = "Active",
+                CreatedAt = DateTime.Now
+            };
+            var courseServiceMock = new Mock<ICourseService>();
+            courseServiceMock.Setup(courseServiceMock => courseServiceMock.GetCourse(It.IsAny<int>()))
+                .ReturnsAsync(expected);
+            var sut = new CourseController(courseServiceMock.Object);
+            // Act
+            var result = await sut.GetCourse(1);
+            // Assert
+            var ok = Assert.IsType<OkObjectResult>(result);
+            Assert.Equal(StatusCodes.Status200OK, ok.StatusCode);
+            var payload = Assert.IsType<CourseDTO>(ok.Value);
+            Assert.Equal(expected.CourseId, payload.CourseId);
+            Assert.Equal(expected.CourseName, payload.CourseName);
+        }
+
+        [Theory]
+        [InlineData(-1)] // Negative ID
+        [InlineData(0)]  // Zero ID
+        public async Task GetCourse_Returns400_WhenIdIsInvalid(int id)
+        {
+            // Arrange
+            var courseServiceMock = new Mock<ICourseService>();
+            var sut = new CourseController(courseServiceMock.Object);
+            // Act
+            var result = await sut.GetCourse(id);
+            // Assert
+            var badRequest = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal(StatusCodes.Status400BadRequest, badRequest.StatusCode);
+            Assert.Equal("Id should be greater than 0 !", badRequest.Value);
+        }
+
+        [Fact]
+        public async Task GetCourse_Returns404_WhenCourseNotFound()
+        {
+            //Arrange
+            var courseServiceMock = new Mock<ICourseService>();
+            courseServiceMock.Setup(courseServiceMock => courseServiceMock.GetCourse(It.IsAny<int>()))
+                .ReturnsAsync(new CourseDTO { CourseId = 0 }); // Simulating that the course was not found
+            var sut = new CourseController(courseServiceMock.Object);
+
+            //Act
+            var result = await sut.GetCourse(1);
+
+            //Assert
+            var notFound = Assert.IsType<NotFoundObjectResult>(result);
+            Assert.Equal(StatusCodes.Status404NotFound, notFound.StatusCode);
+            Assert.Equal("A course with id 1 is not found !", notFound.Value);
+        }
     }
 }

@@ -82,7 +82,7 @@ namespace CourseAppAPI.Controllers
 
                 var course = await _courseService.GetCourse(id);
                 if (course.CourseId==0 || course==null)
-                    return NotFound();
+                    return NotFound($"A course with id {id} is not found !");
                 return Ok(course);
             }
             catch (Exception ex)
