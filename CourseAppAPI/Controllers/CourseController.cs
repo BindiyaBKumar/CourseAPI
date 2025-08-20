@@ -100,7 +100,9 @@ namespace CourseAppAPI.Controllers
             {
                 if (input == null)
                     return BadRequest("Invalid input!");
-                
+                if(!ModelState.IsValid)
+                    return BadRequest(ModelState);
+
 
                 var newcourse = await _courseService.AddCourse(input);
                 if (newcourse==null || newcourse.CourseId==0)

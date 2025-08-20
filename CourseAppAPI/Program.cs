@@ -4,11 +4,20 @@ using CourseAppAPI.Models;
 using CourseAppAPI.Repository;
 using CourseAppAPI.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Prometheus;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy", policy =>
+    policy.WithOrigins("http://localhost:4200")
+    .AllowAnyMethod()
+    .AllowAnyHeader());
+});
 
 //Configure authorization using JWT Token
 var configkey = builder.Configuration.GetValue<string>("Jwt:Key");
@@ -108,15 +117,12 @@ if (app.Environment.IsDevelopment())
     app.Map("/",() => Results.Redirect("/swagger/"));
 }
 
-app.UseCors(options =>
-options.WithOrigins("http://localhost:4200")
-.AllowAnyMethod()
-.AllowAnyHeader());
+
 
 app.UseHttpsRedirection();
 
 app.UseHttpMetrics();
-
+app.UseCors("ClientPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
 

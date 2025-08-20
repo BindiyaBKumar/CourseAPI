@@ -2,8 +2,10 @@
 using CourseAppAPI.DTO;
 using CourseAppAPI.Models;
 using CourseAppAPI.Services;
+using CourseAppAPI.Tests.TestData;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -160,6 +162,67 @@ namespace CourseAppAPI.Tests.Controllers
             var notFound = Assert.IsType<NotFoundObjectResult>(result);
             Assert.Equal(StatusCodes.Status404NotFound, notFound.StatusCode);
             Assert.Equal("A course with id 1 is not found !", notFound.Value);
+        }
+
+        [Fact]
+        public async Task CreateCourse_Returns200_WithPayload()
+        {
+            // Arrange
+            var expected = new CourseDTO
+            {
+                CourseId = 1,
+                CourseName = "New Course",
+                CourseNumber = "NC101",
+                CourseDuration = 45,
+                CourseTutor = "Jane Doe",
+                CourseCost = 150,
+                CourseDescription = "This is a new course.",
+                CourseStatus = "Active",
+                CreatedAt = DateTime.Now
+            };
+            var courseServiceMock = new Mock<ICourseService>();
+            courseServiceMock.Setup(courseServiceMock => courseServiceMock.AddCourse(It.IsAny<CourseDTO>()))
+                .ReturnsAsync(expected);
+            var sut = new CourseController(courseServiceMock.Object);
+            // Act
+            var result = await sut.CreateCourse(expected);
+            // Assert
+            var ok = Assert.IsType<OkObjectResult>(result);
+            Assert.Equal(StatusCodes.Status200OK, ok.StatusCode);
+            var payload = Assert.IsType<CourseDTO>(ok.Value);
+            Assert.Equal(expected.CourseId, payload.CourseId);
+        }
+
+        [Theory]
+        [ClassData(typeof(CourseListTestData))]
+        public async Task CreateCourse_Returns400_WhenInputIsInvalid(CourseDTO input)
+        {
+            // Arrange
+            var courseServiceMock = new Mock<ICourseService>();
+            var sut = new CourseController(courseServiceMock.Object);
+            sut.ModelState.AddModelError("CourseName", "Required");
+            sut.ModelState.AddModelError("CourseNumber", "Required");
+
+            // Act
+
+            var result = await sut.CreateCourse(input);
+            
+            // Assert
+            if (input.CourseNumber == null)
+            {
+                var badRequest = Assert.IsType<BadRequestObjectResult>(result);
+                Assert.Equal(StatusCodes.Status400BadRequest, badRequest.StatusCode);
+                var problem = Assert.IsType<SerializableError>(badRequest.Value);
+                Assert.True(problem.ContainsKey("CourseNumber"));
+            }
+            else if (input.CourseName == null)
+            {
+                var badRequest = Assert.IsType<BadRequestObjectResult>(result);
+                Assert.Equal(StatusCodes.Status400BadRequest, badRequest.StatusCode);
+                var problem = Assert.IsType<SerializableError>(badRequest.Value);
+                Assert.True(problem.ContainsKey("CourseName"));
+            }
+            
         }
     }
 }
