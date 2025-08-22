@@ -146,10 +146,33 @@ Content-Type: application/json
   "password": "password"
 }
 
+# Secret Management with Azure Key Vault (Optional)
+The app has optional provision to store and use secrets via Azure Key Vault.
+
+In order to enable the feature, follow the below steps:
+1. Open your Azure dashboard and create a key vault to store secrets
+Bash command : az keyvault create --name MyCourseApiVault --resource-group MyResourceGroup --location eastus
+2. From Azure Dashboard --> Go to Resources --> Open the new key vault (MyCourseApiVault) --> Select Access Control (IAM) from left Menu --> Click 'Add Role Assignment' --> Select desired role( eg: Key Vault Administrator) --> Click on Next and under Select Members, choose your user --> Review and assign role.
+
+3. Add The secrets for DB Connection string, JWT Token, Audience and Issuer values in the vault manually or using below commands
+Bash command :
+az keyvault secret set --vault-name MyCourseApiVault --name "CourseApi-DbConnection" --value "<your-connection-string>"
+az keyvault secret set --vault-name MyCourseApiVault --name "CourseApi-JwtKey" --value "<your-jwt-secret>"
+az keyvault secret set --vault-name MyCourseApiVault --name "CourseApi-Issuer" --value "<your-issuer-secret>"
+az keyvault secret set --vault-name MyCourseApiVault --name "CourseApi-Audience" --value "<your-audience-secret>"
+
+4. Open appsettings.json in the .Net solution.
+5. Change the value of the key "useKeyVault" to true .
+6. Replace the placeholder "<azure-key-vault-name>" with the name of your key vault (Note : DO NOT USE THE ENTIRE URI. USE ONLY THE KEYVAULT NAME. Eg: "MyCourseApiVault").
+Note : In case you have used a different secret or key, ensure that it is properly mapped in the middlewares in Program.cs. In case it is a JWT secret, ensure it is used in JWTTokenService.cs as well.
+7. Connect to your Azure account via Visual Studio (Tools --> Options --> Azure Service Authentication).
+8. Once you execute the application locally, it should fetch values from Azure Key Vault.
+
 # Future improvements
 
-1. Manage application secrets
-2. Add XUnit test cases
+1. Add Caching
+2. Add more Xunit test cases
+3. Try to integrate Prometheus/Kubernetes
 
 
 

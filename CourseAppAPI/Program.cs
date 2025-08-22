@@ -22,20 +22,24 @@ builder.Services.AddCors(options =>
 
 
 //Add Azure Key Vault
-var keyVaultName = builder.Configuration.GetValue<string>("keyVault:keyVaultName");
-var keyVaultUri = "";
-
-if(!string.IsNullOrEmpty(keyVaultName))
-{
-    keyVaultUri = $"https://{keyVaultName}.vault.azure.net";
-}
-if(!string.IsNullOrEmpty(keyVaultUri))
-{
-    var credentials = new DefaultAzureCredential();
-    builder.Configuration.AddAzureKeyVault(new Uri(keyVaultUri),credentials);
-}
-
 var useKeyVault = builder.Configuration.GetValue<bool>("keyVault:useKeyVault");
+if (useKeyVault)
+{
+    var keyVaultName = builder.Configuration.GetValue<string>("keyVault:keyVaultName");
+    var keyVaultUri = "";
+
+    if (!string.IsNullOrEmpty(keyVaultName))
+    {
+        keyVaultUri = $"https://{keyVaultName}.vault.azure.net";
+    }
+    if (!string.IsNullOrEmpty(keyVaultUri))
+    {
+        var credentials = new DefaultAzureCredential();
+        builder.Configuration.AddAzureKeyVault(new Uri(keyVaultUri), credentials);
+    }
+}
+
+
 
 
 
@@ -45,9 +49,9 @@ var audience = "";
 var issuer = "";
 if (useKeyVault)
 {
-    configkey = builder.Configuration["<jwt-token-key>"];
-    audience = builder.Configuration["<audience-key>"];
-    issuer = builder.Configuration["<issuer-key>"];
+    configkey = builder.Configuration["CourseApi-JwtKey"];
+    audience = builder.Configuration["CourseApi-Issuer"];
+    issuer = builder.Configuration["CourseApi-Audience"];
 }
 else
 {
@@ -120,7 +124,7 @@ else
         var conn = "";        
         if(useKeyVault)
         {
-            conn = builder.Configuration["DbConnectionString"]; // Connect via Azure Key Vault secret key
+            conn = builder.Configuration["CourseApi-DbConnection"]; // Connect via Azure Key Vault secret key
         }
         else
         {

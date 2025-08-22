@@ -27,9 +27,9 @@ namespace CourseAppAPI.Helper
             var audience = "";
             if (_configuration.GetValue<bool>("keyVault:useKeyVault"))
             {
-                configkey = _configuration["<jwt-token-key>"];
-                audience = _configuration["<audience-key>"];
-                issuer = _configuration["<issuer-key>"];
+                configkey = _configuration["CourseApi-JwtKey"];
+                audience = _configuration["CourseApi-Issuer"];
+                issuer = _configuration["CourseApi-Audience"];
             }
             else
             {
