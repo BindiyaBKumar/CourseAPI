@@ -3,7 +3,7 @@ A simple yet production-style ASP.NET Core Web API for managing courses.
 This project demonstrates clean architecture, environment-based configuration, and database flexibility (In-Memory or SQL Server).
 It also includes a Dockerfile for containerized deployment.
 
-# Features
+# Features:
 1. CRUD operations for managing course details
 2. In-Memory database for quick local testing
 3. SQL Server integration for production-like setup
@@ -11,15 +11,17 @@ It also includes a Dockerfile for containerized deployment.
 5. RESTful endpoints with proper HTTP verbs and status codes
 6. Swagger UI for API documentation
 7. Dockerized for easy deployment
+8. Azure Key Vault Integration
+9. XUnit test cases
 
 
-# Tech Stack
+# Tech Stack:
 1. Backend : ASP.Net Core 9.0
 2. Database : EF Core (In-Memory/SQL Server)
 3. Language : C#
 4. Tools : Swagger UI for API Documentation
 
-# Project Structure
+# Project Structure:
 
 CourseAppAPI/
  ├── Controllers/
@@ -34,8 +36,7 @@ CourseAppAPI/
  ├── Program.cs
  README.md
 
- # Setup and Run
-
+ # Setup and Run:
 1. Clone the Repository
 
  git clone https://github.com/BindiyaBKumar/CourseAPI.git
@@ -89,8 +90,7 @@ POST /api/UpdateCourse/{id} → Update a course
 DELETE /api/Course/{id} → Delete a course
 
 
-# Query Parameters
-
+# Query Parameters:
 page : Accepts the page number (Default value is 1)
 pageSize : Accepts the number of data items that a page must contain. (Default value is 20)
 sort : Accepts one of the following values to sort data:
@@ -105,7 +105,7 @@ tutor : Accepts tutor name to filter data based on it. (Eg : Mr. X)
 q : Accepts a string and returns data where COurse name or Course description contains this string
 
 
-# Sample Request
+# Sample Request:
 
 POST /api/AddCourse
 
@@ -120,8 +120,7 @@ POST /api/AddCourse
 
 }
 
-# Authentication
-
+# Authentication:
 The endpoints in this Web API uses JWT (JSON Web Token) Bearer Authentication to secure endpoints.
 
 When using the CRUD endpoints,
@@ -137,6 +136,7 @@ In case of Swagger UI,
 
 Note : Token expiration is configured in appsettings.json under the Jwt section.
 
+
 # Sample Login Request:
 POST /api/auth/login
 Content-Type: application/json
@@ -146,7 +146,7 @@ Content-Type: application/json
   "password": "password"
 }
 
-# Secret Management with Azure Key Vault (Optional)
+# Secret Management with Azure Key Vault (Optional):
 The app has optional provision to store and use secrets via Azure Key Vault.
 
 In order to enable the feature, follow the below steps:
@@ -168,8 +168,8 @@ Note : In case you have used a different secret or key, ensure that it is proper
 7. Connect to your Azure account via Visual Studio (Tools --> Options --> Azure Service Authentication).
 8. Once you execute the application locally, it should fetch values from Azure Key Vault.
 
-# Future improvements
 
+# Future improvements:
 1. Add Caching
 2. Add more Xunit test cases
 3. Try to integrate Prometheus/Kubernetes
