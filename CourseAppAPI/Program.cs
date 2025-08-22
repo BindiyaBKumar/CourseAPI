@@ -1,3 +1,4 @@
+using Azure.Identity;
 using CourseAppAPI.DAL;
 using CourseAppAPI.Helper;
 using CourseAppAPI.Models;
@@ -19,9 +20,42 @@ builder.Services.AddCors(options =>
     .AllowAnyHeader());
 });
 
+
+//Add Azure Key Vault
+var keyVaultName = builder.Configuration.GetValue<string>("keyVault:keyVaultName");
+var keyVaultUri = "";
+
+if(!string.IsNullOrEmpty(keyVaultName))
+{
+    keyVaultUri = $"https://{keyVaultName}.vault.azure.net";
+}
+if(!string.IsNullOrEmpty(keyVaultUri))
+{
+    var credentials = new DefaultAzureCredential();
+    builder.Configuration.AddAzureKeyVault(new Uri(keyVaultUri),credentials);
+}
+
+var useKeyVault = builder.Configuration.GetValue<bool>("keyVault:useKeyVault");
+
+
+
 //Configure authorization using JWT Token
-var configkey = builder.Configuration.GetValue<string>("Jwt:Key");
-if(string.IsNullOrEmpty(configkey))
+var configkey = "";
+var audience = "";
+var issuer = "";
+if (useKeyVault)
+{
+    configkey = builder.Configuration["<jwt-token-key>"];
+    audience = builder.Configuration["<audience-key>"];
+    issuer = builder.Configuration["<issuer-key>"];
+}
+else
+{
+    configkey = builder.Configuration.GetValue<string>("Jwt:Key");
+    issuer = builder.Configuration.GetValue<string>("Jwt:Issuer");
+    audience = builder.Configuration.GetValue<string>("Jwt:Audience");
+}
+if (string.IsNullOrEmpty(configkey))
 {
     throw new ArgumentException("JWT Key is not configured properly in appsettings.json");
 }
@@ -34,8 +68,8 @@ builder.Services.AddAuthentication("Bearer")
                 ValidateAudience = true,
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
-                ValidIssuer = builder.Configuration.GetValue<string>("Jwt:Issuer"),
-                ValidAudience = builder.Configuration.GetValue<string>("Jwt:Audience"),
+                ValidIssuer = issuer,
+                ValidAudience = audience,
                 IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(configkey))
             };
         });
@@ -75,12 +109,25 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 builder.Services.AddMetrics();
-if (builder.Configuration.GetValue<bool>("UseUnMemoryDb"))
+var useInMemoryDB = builder.Configuration.GetValue<bool>("UseInMemoryDb");
+if (useInMemoryDB)
 {
     builder.Services.AddDbContext<CourseDetailDBContext>(options => options.UseInMemoryDatabase("CourseDetailDB"));}
 else
 {
-    builder.Services.AddDbContext<CourseDetailDBContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("CourseDetailDB")));
+    builder.Services.AddDbContext<CourseDetailDBContext>(options =>
+    {
+        var conn = "";        
+        if(useKeyVault)
+        {
+            conn = builder.Configuration["DbConnectionString"]; // Connect via Azure Key Vault secret key
+        }
+        else
+        {
+            conn = builder.Configuration.GetConnectionString("CourseDetailDB"); // Connect via SQL Server DB Connection String
+        }
+            options.UseSqlServer(conn);
+    });
 }
 builder.Services.AddScoped<ICourseRepository, CourseRepository>();
 builder.Services.AddScoped<ICourseService, CourseService>();

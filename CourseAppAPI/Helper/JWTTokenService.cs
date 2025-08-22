@@ -22,7 +22,21 @@ namespace CourseAppAPI.Helper
             };
 
             //Encode and secure the key
-            string? configkey = _configuration.GetValue<string>("Jwt:Key");
+            string? configkey = "";
+            var issuer = "";
+            var audience = "";
+            if (_configuration.GetValue<bool>("keyVault:useKeyVault"))
+            {
+                configkey = _configuration["<jwt-token-key>"];
+                audience = _configuration["<audience-key>"];
+                issuer = _configuration["<issuer-key>"];
+            }
+            else
+            {
+                configkey = _configuration.GetValue<string>("Jwt:Key");
+                audience = _configuration.GetValue<string>("Jwt:Audience");
+                issuer = _configuration.GetValue<string>("Jwt:Issuer");
+            }
             if (!string.IsNullOrEmpty(configkey))
             {
                 var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(configkey));
@@ -33,8 +47,8 @@ namespace CourseAppAPI.Helper
 
                 //Generate the token using metadata, claim and signature
                 var token = new JwtSecurityToken(
-                    issuer: _configuration.GetValue<string>("Jwt:Issuer"),
-                    audience: _configuration.GetValue<string>("Jwt:Audience"),
+                    issuer: issuer,
+                    audience: audience,
                     claims: claims,
                     expires: DateTime.Now.AddMinutes(Convert.ToDouble(_configuration.GetValue<string>("Jwt:ExpirationMininutes"))),
                     signingCredentials: creds
