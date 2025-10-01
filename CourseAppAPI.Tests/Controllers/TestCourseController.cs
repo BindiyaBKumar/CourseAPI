@@ -6,6 +6,7 @@ using CourseAppAPI.Tests.TestData;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Extensions.Caching.Memory;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,7 @@ namespace CourseAppAPI.Tests.Controllers
 {
     public class TestCourseController
     {
+
         [Fact]
         public async Task GetCourseList_Returns200_WithPayLoad()
         {
@@ -30,11 +32,13 @@ namespace CourseAppAPI.Tests.Controllers
                 HasNextPage = false,
                 HasPreviousPage = false
             };
-            var courseServiceMock = new Mock<ICourseService>();
+            var courseServiceMock = new Mock<ICourseService>();            
+            var memoryCacheEntryOptions = new MemoryCacheEntryOptions();
+            var cache = new MemoryCache(new MemoryCacheOptions());
             courseServiceMock.Setup(courseServiceMock => courseServiceMock.GetCourseList(It.IsAny<FilterDTO>()))
                 .ReturnsAsync(expected);
 
-            var sut = new CourseController(courseServiceMock.Object);
+            var sut = new CourseController(courseServiceMock.Object,cache, memoryCacheEntryOptions);
 
             // Act
             var result = await sut.GetCourseList(
@@ -63,7 +67,9 @@ namespace CourseAppAPI.Tests.Controllers
         {
             // Arrange
             var courseServiceMock = new Mock<ICourseService>();
-            var sut = new CourseController(courseServiceMock.Object);
+            var memoryCacheEntryOptions = new MemoryCacheEntryOptions();
+            var cache = new MemoryCache(new MemoryCacheOptions());
+            var sut = new CourseController(courseServiceMock.Object,cache,memoryCacheEntryOptions);
             // Act
             var result = await sut.GetCourseList(
                 page: page, 
@@ -83,8 +89,10 @@ namespace CourseAppAPI.Tests.Controllers
         {
             //Arrange
             var courseServiceMock = new Mock<ICourseService>();
+            var memoryCacheEntryOptions = new MemoryCacheEntryOptions();
+            var cache = new MemoryCache(new MemoryCacheOptions());
             courseServiceMock.Setup(courseServiceMock => courseServiceMock.GetCourseList(It.IsAny<FilterDTO>())).Throws<Exception>();
-            var sut = new CourseController(courseServiceMock.Object);
+            var sut = new CourseController(courseServiceMock.Object,cache, memoryCacheEntryOptions);
 
             //Act
             var exception = await sut.GetCourseList(
@@ -117,9 +125,11 @@ namespace CourseAppAPI.Tests.Controllers
                 CreatedAt = DateTime.Now
             };
             var courseServiceMock = new Mock<ICourseService>();
+            var memoryCacheEntryOptions = new MemoryCacheEntryOptions();
+            var cache = new MemoryCache(new MemoryCacheOptions());
             courseServiceMock.Setup(courseServiceMock => courseServiceMock.GetCourse(It.IsAny<int>()))
                 .ReturnsAsync(expected);
-            var sut = new CourseController(courseServiceMock.Object);
+            var sut = new CourseController(courseServiceMock.Object,cache,memoryCacheEntryOptions);
             // Act
             var result = await sut.GetCourse(1);
             // Assert
@@ -137,7 +147,9 @@ namespace CourseAppAPI.Tests.Controllers
         {
             // Arrange
             var courseServiceMock = new Mock<ICourseService>();
-            var sut = new CourseController(courseServiceMock.Object);
+            var memoryCacheEntryOptions = new MemoryCacheEntryOptions();
+            var cache = new MemoryCache(new MemoryCacheOptions());
+            var sut = new CourseController(courseServiceMock.Object,cache,memoryCacheEntryOptions);
             // Act
             var result = await sut.GetCourse(id);
             // Assert
@@ -151,9 +163,11 @@ namespace CourseAppAPI.Tests.Controllers
         {
             //Arrange
             var courseServiceMock = new Mock<ICourseService>();
+            var memoryCacheEntryOptions = new MemoryCacheEntryOptions();
+            var cache = new MemoryCache(new MemoryCacheOptions());
             courseServiceMock.Setup(courseServiceMock => courseServiceMock.GetCourse(It.IsAny<int>()))
                 .ReturnsAsync(new CourseDTO { CourseId = 0 }); // Simulating that the course was not found
-            var sut = new CourseController(courseServiceMock.Object);
+            var sut = new CourseController(courseServiceMock.Object,cache,memoryCacheEntryOptions);
 
             //Act
             var result = await sut.GetCourse(1);
@@ -181,9 +195,11 @@ namespace CourseAppAPI.Tests.Controllers
                 CreatedAt = DateTime.Now
             };
             var courseServiceMock = new Mock<ICourseService>();
+            var memoryCacheEntryOptions = new MemoryCacheEntryOptions();
+            var cache = new MemoryCache(new MemoryCacheOptions());
             courseServiceMock.Setup(courseServiceMock => courseServiceMock.AddCourse(It.IsAny<CourseDTO>()))
                 .ReturnsAsync(expected);
-            var sut = new CourseController(courseServiceMock.Object);
+            var sut = new CourseController(courseServiceMock.Object,cache,memoryCacheEntryOptions);
             // Act
             var result = await sut.CreateCourse(expected);
             // Assert
@@ -199,7 +215,9 @@ namespace CourseAppAPI.Tests.Controllers
         {
             // Arrange
             var courseServiceMock = new Mock<ICourseService>();
-            var sut = new CourseController(courseServiceMock.Object);
+            var memoryCacheEntryOptions = new MemoryCacheEntryOptions();
+            var cache = new MemoryCache(new MemoryCacheOptions());
+            var sut = new CourseController(courseServiceMock.Object, cache, memoryCacheEntryOptions);
             sut.ModelState.AddModelError("CourseName", "Required");
             sut.ModelState.AddModelError("CourseNumber", "Required");
 
