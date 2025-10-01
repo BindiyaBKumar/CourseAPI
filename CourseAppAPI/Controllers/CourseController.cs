@@ -5,20 +5,28 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Prometheus;
 
 namespace CourseAppAPI.Controllers
-{
-    
+{   
+
     [Route("api/[controller]")]
     [ApiController]
     public class CourseController : ControllerBase
     {
+        private readonly IMemoryCache _cache;
+        private readonly MemoryCacheEntryOptions _memoryCacheEntryOptions;
+        private readonly string courseListCacheKey = "CourseListCacheKey";
+        private readonly string filterCacheKey = "FilterCacheKey";
+
         Counter counter = Metrics.CreateCounter("my_counter", "Counter for GetCourseList Calls");
         private readonly ICourseService _courseService;
-        public CourseController(ICourseService courseService)
+        public CourseController(ICourseService courseService, IMemoryCache cache, MemoryCacheEntryOptions memoryCacheEntryOptions)
         {
             _courseService = courseService;
+            _cache = cache;
+            _memoryCacheEntryOptions = memoryCacheEntryOptions;
         }
 
         [HttpGet]
@@ -53,7 +61,25 @@ namespace CourseAppAPI.Controllers
 
                 };
 
-                const int maxSize = 100;
+                if (_cache.TryGetValue(filterCacheKey, out FilterDTO existingfilters))
+                {
+                    if ((existingfilters==null && filters == null) ||
+                       (existingfilters!=null &&
+                        existingfilters.pageNumber == filters.pageNumber &&
+                        existingfilters.pageSize == filters.pageSize &&
+                        existingfilters.sort == filters.sort &&
+                        existingfilters.status == filters.status &&
+                        existingfilters.tutor == filters.tutor &&
+                        existingfilters.queryString == filters.queryString))
+                    {
+                        if (_cache.TryGetValue(courseListCacheKey, out PaginatedResponse<CourseDTO> cachedCourseList))
+                        {
+                            return Ok(cachedCourseList);
+                        }
+                    }
+                }
+
+                    const int maxSize = 100;
 
                 if (page<1 || pageSize<1 || pageSize>maxSize)
                     return BadRequest($"Page number and page size should be greater than 0 and page size should not exceed {maxSize} !");
@@ -62,6 +88,10 @@ namespace CourseAppAPI.Controllers
 
                 if (courseList == null || courseList.Items == null)
                     return Ok(new PaginatedResponse<CourseDTO> { Items = null });
+
+                _cache.Set(courseListCacheKey, courseList, _memoryCacheEntryOptions);
+                _cache.Set(filterCacheKey, filters, _memoryCacheEntryOptions);
+
                 return Ok(courseList);
             }
             catch (Exception ex)

@@ -27,7 +27,7 @@ namespace CourseAppAPI.Models
 
         public string CourseStatus { get; set; } = "Active";
         
-        public DateTime? CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
 
     }

@@ -103,6 +103,7 @@ namespace CourseAppAPI.Repository
             currentcourse.CourseDuration=course.CourseDuration;
             currentcourse.CourseCost=course.CourseCost;
             currentcourse.CourseDescription=course.CourseDescription;
+            currentcourse.CourseStatus = course.CourseStatus;
 
             await _dbcontext.SaveChangesAsync();
 

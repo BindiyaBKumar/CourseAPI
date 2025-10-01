@@ -5,6 +5,7 @@ using CourseAppAPI.Models;
 using CourseAppAPI.Repository;
 using CourseAppAPI.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Prometheus;
@@ -82,7 +83,6 @@ builder.Services.AddSingleton<JWTTokenService>();
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -113,6 +113,15 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 builder.Services.AddMetrics();
+
+//Configure In-Memory Caching
+builder.Services.AddMemoryCache();
+builder.Services.AddSingleton(new MemoryCacheEntryOptions()
+.SetSlidingExpiration(TimeSpan.FromMinutes(10))
+.SetAbsoluteExpiration(TimeSpan.FromHours(1))
+.SetPriority(CacheItemPriority.Normal));
+
+//Configure DB Context - Use either In-Memory DB or SQL Server DB based on appsettings.json configuration
 var useInMemoryDB = builder.Configuration.GetValue<bool>("UseInMemoryDb");
 if (useInMemoryDB)
 {

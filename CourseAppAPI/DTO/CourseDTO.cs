@@ -21,9 +21,9 @@ namespace CourseAppAPI.DTO
 
         public string? CourseDescription { get; set; }
 
-        public string? CourseStatus { get; set; }
+        public string CourseStatus { get; set; } = "Active";
 
-        public DateTime? CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     }
 }
