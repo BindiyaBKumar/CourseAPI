@@ -169,10 +169,14 @@ Note : In case you have used a different secret or key, ensure that it is proper
 8. Once you execute the application locally, it should fetch values from Azure Key Vault.
 
 
+# Caching:
+
+The app uses In-Memory Caching for the filtered list of Courses. The duration/expiry is configured in Program.cs
+
+
 # Future improvements:
-1. Add Caching
-2. Add more Xunit test cases
-3. Try to integrate Prometheus/Kubernetes
+1. Add more Xunit test cases
+2. Try to integrate Prometheus/Kubernetes
 
 
 
